@@ -1,4 +1,4 @@
-module gitee.com/xuanmingyi/mkimg
+module github.com/xuanmingyi/mkimg
 
 go 1.16
 
