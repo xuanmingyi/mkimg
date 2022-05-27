@@ -7,10 +7,16 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+type copyFile struct {
+	Name   string `yaml:"file"`
+	Offset int64  `yaml:"offset"`
+}
+
 type config struct {
-	Output     string   `yaml:"output"`
+	Output string     `yaml:"output"`
+	Files  []copyFile `yaml:"files"`
+
 	OutputFile *os.File `yaml:"-"`
-	Boot       string   `yaml:"boot"`
 }
 
 func (c *config) TruncateOutput() (err error) {
@@ -27,20 +33,23 @@ func (c *config) TruncateOutput() (err error) {
 	return nil
 }
 
-func (c *config) WriteBoot() (err error) {
-	content, err := ioutil.ReadFile(c.Boot)
-	if err != nil {
-		return err
-	}
+func (c *config) WriteFiles() (err error) {
+	for _, file := range c.Files {
 
-	_, err = c.OutputFile.Seek(0, 0)
-	if err != nil {
-		return err
-	}
+		content, err := ioutil.ReadFile(file.Name)
+		if err != nil {
+			return err
+		}
 
-	_, err = c.OutputFile.Write(content)
-	if err != nil {
-		return err
+		_, err = c.OutputFile.Seek(file.Offset, 0)
+		if err != nil {
+			return err
+		}
+
+		_, err = c.OutputFile.Write(content)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -70,7 +79,7 @@ func main() {
 		panic(err)
 	}
 
-	err = Config.WriteBoot()
+	err = Config.WriteFiles()
 	if err != nil {
 		panic(err)
 	}

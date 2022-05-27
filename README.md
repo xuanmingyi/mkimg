@@ -3,7 +3,9 @@
 ```yaml
 output: hello.img
 
-boot: boot.bin
+copy:
+    - file: boot.bin
+      offset: 0
 ```
 
 * output 软驱镜像1440kb(1.44mb)
