@@ -1,7 +1,7 @@
 # 输出文件
 output: hello.img
 
-copy:
+files:
     # MBR
     - file: boot.bin
       offset: 0
